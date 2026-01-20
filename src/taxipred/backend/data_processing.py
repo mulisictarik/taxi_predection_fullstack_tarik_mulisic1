@@ -1,10 +1,9 @@
-from taxipred.utils.constants import TAXI_CSV_PATH
 import pandas as pd
 import json
-
+from taxipred.utils.constants import TAXI_CSV_PATH
 
 class TaxiData:
-    def init(self):
+    def __init__(self):
         self.df = pd.read_csv(TAXI_CSV_PATH)
 
 
