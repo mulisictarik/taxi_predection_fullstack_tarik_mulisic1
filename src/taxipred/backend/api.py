@@ -2,13 +2,15 @@ from fastapi import FastAPI
 import joblib
 import pandas as pd 
 from pathlib import Path
-from taxipred.backend.data_processing import TaxiData
+
+from src.taxipred.utils.constants import MODEL_PATH, SCALER_PATH
+from src.taxipred.backend.data_processing import TaxiInput, TaxiData
 
 app = FastAPI()
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-MODEL_PATH = BASE_DIR / "model_development" / "taxi_trip_model.joblib"
-SCALER_PATH = BASE_DIR / "model_development" / "taxi_scaler.joblib"
+DATH_PATH = Path(__file__).resolve().parent.parent / "data"
+MODEL_PATH = DATH_PATH  / "taxi_trip_model.joblib"
+SCALER_PATH = DATH_PATH / "taxi_scaler.joblib"
 
 model = joblib.load(MODEL_PATH)
 scaler = joblib.load(SCALER_PATH)

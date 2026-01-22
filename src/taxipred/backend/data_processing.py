@@ -1,10 +1,12 @@
 import pandas as pd
 import json
-from taxipred.utils.constants import TAXI_CSV_PATH
+from pydantic import BaseModel
+
+from src.taxipred.utils.constants import CLEAN_CSV_PATH
 
 class TaxiData:
     def __init__(self):
-        self.df = pd.read_csv(TAXI_CSV_PATH)
+        self.df = pd.read_csv(CLEAN_CSV_PATH)
 
 
     def to_json(self):
