@@ -1,37 +1,44 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import joblib
-import pandas as pd 
-from pathlib import Path
-
 from src.taxipred.utils.constants import MODEL_PATH, SCALER_PATH
-from src.taxipred.backend.data_processing import TaxiInput, TaxiData
+from src.taxipred.backend.data_processing import TaxiInput, TaxiData, PredictionOutput
 
-app = FastAPI()
+app = FastAPI(title="Taxi Price Predictor", version="1.0")
 
-DATH_PATH = Path(__file__).resolve().parent.parent / "data"
-MODEL_PATH = DATH_PATH  / "taxi_trip_model.joblib"
-SCALER_PATH = DATH_PATH / "taxi_scaler.joblib"
-
+# Enable CORS for frontend
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 model = joblib.load(MODEL_PATH)
-scaler = joblib.load(SCALER_PATH)
+preprocessor = joblib.load(SCALER_PATH)
 taxi_data = TaxiData()
 
 @app.get("/")
 def read_root():
-    return {"message": "API is online"}
+    return {"message": "Taxi Price Predictor API"}
 
-@app.get("/taxi/")
-async def read_taxi_data():
+@app.get("/taxi/data")
+async def get_taxi_data():
     return taxi_data.to_json()
 
-@app.post("/predict")
-async def predict_price(data: dict):
-    input_list = data["features"]
 
-    df = pd.DataFrame([input_list])
-
-    scaled_data = scaler.transform(df)
-
-    prediction = model.predict(scaled_data)
-
-    return {"estimated_price": round(float(prediction[0]),2)}
+@app.post("/predict", response_model=PredictionOutput)
+async def predict_price(payload: TaxiInput):
+    
+    # Convert input to DataFrame
+    data_df = payload.to_dataframe()
+    
+    # Transform using preprocessor
+    data_preprocessed = preprocessor.transform(data_df)
+    
+    # Predict
+    prediction = model.predict(data_preprocessed)
+    
+    return {
+        "predicted_price": round(float(prediction[0]), 2)
+    }
