@@ -35,4 +35,5 @@ Frontend runs on `http://localhost:8501`
 3. **API** - Serves predictions via REST endpoint
 4. **Web UI** - User-friendly interface to get price predictions
 
-![App](images/taxi_app.png)
+<img width="1481" height="787" alt="Skärmbild 2026-01-24 162023" src="https://github.com/user-attachments/assets/4f8dd3a8-c513-4c00-89e4-98a9c2cf12a9" />
+
